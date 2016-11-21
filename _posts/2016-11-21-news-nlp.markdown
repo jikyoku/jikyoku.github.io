@@ -1,3 +1,12 @@
+---
+layout: post
+title:  "新闻要素的抽取"
+date:   2016-11-21 20:44:13 +0800
+categories: jekyll nlp
+subtitle: subtitle
+author: 时旭
+tag: 技术
+---
 # **领域新闻事件抽取**
 
 ## 要解决的问题
