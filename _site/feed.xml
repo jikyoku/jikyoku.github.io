@@ -6,8 +6,8 @@
 </description>
     <link>http://yourdomain.com/</link>
     <atom:link href="http://yourdomain.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 21 Nov 2016 21:10:21 +0800</pubDate>
-    <lastBuildDate>Mon, 21 Nov 2016 21:10:21 +0800</lastBuildDate>
+    <pubDate>Mon, 21 Nov 2016 21:12:18 +0800</pubDate>
+    <lastBuildDate>Mon, 21 Nov 2016 21:12:18 +0800</lastBuildDate>
     <generator>Jekyll v3.0.1</generator>
     
       <item>
@@ -35,6 +35,274 @@
         <category>jekyll</category>
         
         <category>update</category>
+        
+      </item>
+    
+      <item>
+        <title>New</title>
+        <description>&lt;h1 id=&quot;section&quot;&gt;&lt;strong&gt;领域新闻事件抽取&lt;/strong&gt;&lt;/h1&gt;
+
+&lt;h2 id=&quot;section-1&quot;&gt;要解决的问题&lt;/h2&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;根据已有的新闻语料，训练事件抽取模型&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;利用训练好的模型对新读入的新闻进行事件抽取，识别出新闻所描述的事件类型，以及事件的要素信息&lt;/p&gt;
+
+    &lt;p&gt;​	输入：一篇新闻&lt;/p&gt;
+
+    &lt;p&gt;​	输出：事件类型   &amp;amp;  事件类型模板对应元素信息&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;分为两个过程：&lt;/p&gt;
+
+    &lt;ol&gt;
+      &lt;li&gt;模型训练过程：利用已有语料训练，这里主要得到事件类型和事件触发词&lt;/li&gt;
+      &lt;li&gt;事件识别和抽取过程：对新的新闻进行事件识别和元素抽取&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h1 id=&quot;section-2&quot;&gt;&lt;strong&gt;模型建立过程&lt;/strong&gt;&lt;/h1&gt;
+
+&lt;h2 id=&quot;section-3&quot;&gt;抽取任务&lt;/h2&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;事件类型发现&lt;/p&gt;
+
+    &lt;blockquote&gt;
+      &lt;p&gt;事件类型发现是事件抽取的基础，唯有首先确定事件类型，我们才能根据触发词判断到底属于哪个类型的事件&lt;/p&gt;
+    &lt;/blockquote&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;事件触发词 &amp;amp; 事件类型的识别&lt;/p&gt;
+
+    &lt;blockquote&gt;
+      &lt;p&gt;事件触发词是指引起事件发生的词，是决定事件类别的重要特征&lt;/p&gt;
+    &lt;/blockquote&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;事件元素的识别&lt;/p&gt;
+
+    &lt;blockquote&gt;
+      &lt;p&gt;事件元素是指事件的参与者，本文根据教育领域和通信领域中发掘的事件类型建立相关的事件模板（人工）&lt;/p&gt;
+    &lt;/blockquote&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;section-4&quot;&gt;触发词抽取 &amp;amp; 事件类型自动发现&lt;/h2&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;方案：利用句子聚类或者相似度计算（余弦相似度）对含有候选触发词的句子进行聚类，将每个类的句子集合看作是一个事件类型，然后人工读取这些事件句子，给出事件类型定义&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;具体过程&lt;/p&gt;
+
+    &lt;blockquote&gt;
+      &lt;h4 id=&quot;section-5&quot;&gt;触发词抽取算法&lt;/h4&gt;
+
+      &lt;ol&gt;
+        &lt;li&gt;输入：文本&lt;/li&gt;
+        &lt;li&gt;分词、分句&lt;/li&gt;
+        &lt;li&gt;统计所有动词的&lt;code class=&quot;highlighter-rouge&quot;&gt;TF-IDF&lt;/code&gt;值,将&lt;code class=&quot;highlighter-rouge&quot;&gt;TF-IDF&lt;/code&gt;值大于阈值&lt;code class=&quot;highlighter-rouge&quot;&gt;V&lt;/code&gt;的动词设为候选触发词&lt;/li&gt;
+        &lt;li&gt;对文本所有含有候选触发词的句子进行依存句法分析&lt;/li&gt;
+        &lt;li&gt;识别出句子中的主谓关系&lt;code class=&quot;highlighter-rouge&quot;&gt;SBV&lt;/code&gt;和动宾关系&lt;code class=&quot;highlighter-rouge&quot;&gt;VOB&lt;/code&gt;二元组&lt;/li&gt;
+        &lt;li&gt;判断两对二元组中动词是否相等，如果相等，则将该动词设为真的触发词，并将该句子保存为候选事件句&lt;/li&gt;
+        &lt;li&gt;最后结果为一个候选触发词集合以及含有候选触发词&lt;code class=&quot;highlighter-rouge&quot;&gt;triggerSet&lt;/code&gt;的事件句子集合&lt;code class=&quot;highlighter-rouge&quot;&gt;sentenceSet&lt;/code&gt;&lt;/li&gt;
+        &lt;li&gt;输出：&lt;code class=&quot;highlighter-rouge&quot;&gt;triggerSet&lt;/code&gt; &amp;amp; &lt;code class=&quot;highlighter-rouge&quot;&gt;sentenceSet&lt;/code&gt;&lt;/li&gt;
+      &lt;/ol&gt;
+    &lt;/blockquote&gt;
+
+    &lt;blockquote&gt;
+      &lt;h4 id=&quot;section-6&quot;&gt;事件句子聚类算法1：&lt;/h4&gt;
+
+      &lt;ol&gt;
+        &lt;li&gt;
+          &lt;p&gt;输入：候选事件句集合&lt;code class=&quot;highlighter-rouge&quot;&gt;sentenceSet&lt;/code&gt;&lt;/p&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+          &lt;p&gt;利用余弦相似度，分别计算任意两个句子间的相似度&lt;/p&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+          &lt;p&gt;如果高于阈值&lt;code class=&quot;highlighter-rouge&quot;&gt;V&lt;/code&gt;，将这两个句子归为一个事件类别&lt;/p&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+          &lt;p&gt;聚类结束后，由人去读取每个类别的句子，进行事件归纳&lt;/p&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+          &lt;p&gt;输出：事件句子集合&lt;code class=&quot;highlighter-rouge&quot;&gt;eventSentenceSet&lt;/code&gt;&lt;/p&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+          &lt;p&gt;最后结果将得出一个事件类型集合&lt;code class=&quot;highlighter-rouge&quot;&gt;eventSentenceSet&lt;/code&gt;，以及&lt;code class=&quot;highlighter-rouge&quot;&gt;触发词--事件类型&lt;/code&gt;二元对照表&lt;/p&gt;
+
+          &lt;p&gt;优点：简单，易于实现&lt;/p&gt;
+
+          &lt;p&gt;缺点：比较相似度过程中失去了句子触发词的上下文特征&lt;/p&gt;
+        &lt;/li&gt;
+      &lt;/ol&gt;
+    &lt;/blockquote&gt;
+
+    &lt;blockquote&gt;
+      &lt;h4 id=&quot;section-7&quot;&gt;事件句子聚类算法2:&lt;/h4&gt;
+
+      &lt;ol&gt;
+        &lt;li&gt;候选句子集合&lt;code class=&quot;highlighter-rouge&quot;&gt;sentenceSet&lt;/code&gt;&lt;/li&gt;
+        &lt;li&gt;构建特征向量
+          &lt;ol&gt;
+            &lt;li&gt;触发词&lt;/li&gt;
+            &lt;li&gt;触发词左边一个实体&lt;/li&gt;
+            &lt;li&gt;触发词右边一个实体&lt;/li&gt;
+            &lt;li&gt;句子主谓关系&lt;code class=&quot;highlighter-rouge&quot;&gt;SBV&lt;/code&gt;中主语&lt;/li&gt;
+            &lt;li&gt;句子动宾关系&lt;code class=&quot;highlighter-rouge&quot;&gt;VOB&lt;/code&gt;中宾语&lt;/li&gt;
+            &lt;li&gt;。。。&lt;/li&gt;
+          &lt;/ol&gt;
+        &lt;/li&gt;
+        &lt;li&gt;对特征集合利用K近邻算法或者其他算法进行聚类&lt;/li&gt;
+      &lt;/ol&gt;
+    &lt;/blockquote&gt;
+
+    &lt;ol&gt;
+      &lt;li&gt;至此，通过聚类，可以得出事件句子蔟，然后通过人工去归纳总结，得出相关类别的事件。这一过程我们可以得到事件类型和事件触发词，接下来开始事件抽取过程&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&quot;section-8&quot;&gt;&lt;strong&gt;事件识别和元素抽取&lt;/strong&gt;&lt;/h1&gt;
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;section-9&quot;&gt;候选事件抽取&lt;/h2&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;方案：将句子中每个词和触发词表对比匹配，如果匹配成功，则认为该句子是候选事件句，对应的事件类型为触发词对应的事件类型&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;具体算法：&lt;/p&gt;
+
+    &lt;blockquote&gt;
+      &lt;ol&gt;
+        &lt;li&gt;
+          &lt;p&gt;输入：触发词表&lt;code class=&quot;highlighter-rouge&quot;&gt;triggerSet&lt;/code&gt;，待处理新闻语料&lt;/p&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+          &lt;p&gt;分词、分句&lt;code class=&quot;highlighter-rouge&quot;&gt;sentence&lt;/code&gt;&lt;/p&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+          &lt;p&gt;遍历句子&lt;code class=&quot;highlighter-rouge&quot;&gt;sentence&lt;/code&gt;中每一个词&lt;code class=&quot;highlighter-rouge&quot;&gt;w&lt;/code&gt;&lt;/p&gt;
+
+          &lt;p&gt;​	如果词&lt;code class=&quot;highlighter-rouge&quot;&gt;w&lt;/code&gt; 在&lt;code class=&quot;highlighter-rouge&quot;&gt;triggerSet&lt;/code&gt;中, &lt;code class=&quot;highlighter-rouge&quot;&gt;sentence&lt;/code&gt;为候选事件，且事件类型为&lt;code class=&quot;highlighter-rouge&quot;&gt;w&lt;/code&gt;对应的事件类型&lt;/p&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+          &lt;p&gt;输出：&lt;code class=&quot;highlighter-rouge&quot;&gt;candidateEventSet&lt;/code&gt;&lt;/p&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+          &lt;p&gt;至此，这一步之后得到的是一个候选事件集合&lt;code class=&quot;highlighter-rouge&quot;&gt;candidateEventSet&lt;/code&gt;&lt;/p&gt;
+        &lt;/li&gt;
+      &lt;/ol&gt;
+    &lt;/blockquote&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;section-10&quot;&gt;对候选事件进行分类&lt;/h2&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;问题：由于仅仅根据含有触发词就判断是候选事件，这样引入了大量假的候选事件，所以要对候选事件进行筛选&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;方案：使用最大熵分类器进行分类&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;具体算法：&lt;/p&gt;
+
+    &lt;blockquote&gt;
+      &lt;ol&gt;
+        &lt;li&gt;
+          &lt;p&gt;输入：候选事件集合&lt;code class=&quot;highlighter-rouge&quot;&gt;candidateEventSet&lt;/code&gt;&lt;/p&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+          &lt;p&gt;最大熵模型训练&lt;/p&gt;
+        &lt;/li&gt;
+        &lt;li&gt;特征选取
+          &lt;ol&gt;
+            &lt;li&gt;​    F1：候选事件中的触发词&lt;/li&gt;
+            &lt;li&gt;​    F2：候选事件触发词的词性&lt;/li&gt;
+            &lt;li&gt;​    F3：候选事件触发词左侧 4 个词&lt;/li&gt;
+            &lt;li&gt;​    F4：候选事件触发词右侧 4 个词&lt;/li&gt;
+            &lt;li&gt;​    F5：候选事件触发词左侧 4 个词的词性&lt;/li&gt;
+            &lt;li&gt;​    F6：候选事件触发词右侧 4 个词的词性&lt;/li&gt;
+            &lt;li&gt;​    F7：候选事件触发词左侧 1 个实体&lt;/li&gt;
+            &lt;li&gt;​    F8：候选事件触发词右侧 1 个实体&lt;/li&gt;
+            &lt;li&gt;​    F9：候选事件触发词左侧 1 个实体的实体类型&lt;/li&gt;
+            &lt;li&gt;​    F10：候选事件触发词左侧 1 个实体的实体类型&lt;/li&gt;
+            &lt;li&gt;​    F11：候选事件触发词在依存句法中所关联的主语&lt;/li&gt;
+            &lt;li&gt;​    F12：候选事件触发词在依存句法中所关联的宾语&lt;/li&gt;
+          &lt;/ol&gt;
+        &lt;/li&gt;
+        &lt;li&gt;人工标注一部分训练数据，使用一部分训练数据训练最大熵分类模型&lt;/li&gt;
+        &lt;li&gt;
+          &lt;p&gt;采用交叉验证方法，对模型进行评估和调整，直到满足预期结果&lt;/p&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+          &lt;p&gt;用训练好的最大熵模型对候选事件进行分类，得到真正的候选事件&lt;/p&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+          &lt;p&gt;输出：&lt;code class=&quot;highlighter-rouge&quot;&gt;realEventSet&lt;/code&gt;&lt;/p&gt;
+        &lt;/li&gt;
+        &lt;li&gt;至此，通过分类，得到真的候选事件集合&lt;code class=&quot;highlighter-rouge&quot;&gt;realEventSet&lt;/code&gt;&lt;/li&gt;
+      &lt;/ol&gt;
+
+      &lt;p&gt;注：由于人工标注训练数据，难免存在误差，可能导致分类器不准确&lt;/p&gt;
+    &lt;/blockquote&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;section-11&quot;&gt;篇章级事件确定&lt;/h2&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;问题：经过上一步处理后，我们可以得到一篇新闻中所有的事件句子集合，这些集合可能由多个事件类型，我们要确定一种方案，从这些候选事件类型中，确定这篇新闻到底属于哪个事件类型&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;方案：从多个方面计算，考虑到一般情况下，新闻标题是整篇新闻的核心句，最能说明正文所描述的新闻事件，我们将对新闻标题进行特殊处理，具体请见下面算法&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;具体算法：&lt;/p&gt;
+
+    &lt;blockquote&gt;
+      &lt;ol&gt;
+        &lt;li&gt;输入：&lt;code class=&quot;highlighter-rouge&quot;&gt;realEventSet&lt;/code&gt;，新闻标题&lt;code class=&quot;highlighter-rouge&quot;&gt;title&lt;/code&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;title&lt;/code&gt;中是否含有触发词&lt;/li&gt;
+      &lt;/ol&gt;
+
+      &lt;p&gt;​&lt;/p&gt;
+
+      &lt;p&gt;​&lt;/p&gt;
+    &lt;/blockquote&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;section-12&quot;&gt;事件元素抽取&lt;/h2&gt;
+
+</description>
+        <pubDate>Mon, 21 Nov 2016 00:00:00 +0800</pubDate>
+        <link>http://yourdomain.com/2016/11/21/new.html</link>
+        <guid isPermaLink="true">http://yourdomain.com/2016/11/21/new.html</guid>
+        
         
       </item>
     
